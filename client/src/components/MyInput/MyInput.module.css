@@ -1,0 +1,20 @@
+.container {
+  flex-direction: column;
+  display: flex;
+}
+
+.input {
+   border: 0;
+   border-bottom: 1px #14142B solid;
+   outline: none;
+   padding: 4px;
+   font-size: 24px;
+   color: #14142B;
+   background-color: transparent;
+}
+
+.label {
+   color: #6E7191;
+   font-size: 18px;
+   letter-spacing: 1px;
+}

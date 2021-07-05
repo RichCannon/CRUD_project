@@ -1,0 +1,14 @@
+.container {
+   width: 135px;
+   height: 56px;
+   display: flex;
+   background-color: #EFF0F6;
+   justify-content: center;
+   align-items: center;
+   border-radius: 12px;
+}
+
+.label {
+   color: #4E4B66;
+   font-size: 24px;
+}

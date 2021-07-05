@@ -1,0 +1,28 @@
+.container {
+   width: 10px;
+   height: 10px;
+   border: 1px solid #14142B;
+   box-sizing: border-box;
+   border-radius: 2px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.dot {
+   width: 6px;
+   height: 6px;
+   background-color: #14142B;
+   border-radius: 1px;
+}
+
+.mainContainer {
+   display: flex;
+   align-items: center;
+}
+
+.labelText {
+   color: #14142B;
+   font-size: 24px;
+   margin-left: 10px;
+}

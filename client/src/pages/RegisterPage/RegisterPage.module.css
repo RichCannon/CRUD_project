@@ -1,0 +1,33 @@
+.container {
+   display: flex;
+   
+   align-items: center;
+   width: 100vw;
+   height: 100vh;
+   flex-direction: column;
+   background-color: #F7F7FC;
+}
+
+.title {
+   flex: .35;
+   justify-content: center;
+   align-items: center;
+   display: flex;
+   font-weight: 600;
+   font-size: 48px
+}
+
+.inputs {
+   display: flex;
+   flex-direction: column;
+   flex: .25;
+   justify-content: space-evenly;
+}
+
+.checkbox {
+   flex: .1
+}
+
+.button {
+   flex: .1
+}
