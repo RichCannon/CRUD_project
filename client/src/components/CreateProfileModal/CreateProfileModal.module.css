@@ -1,0 +1,59 @@
+.container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   position: fixed;
+   background: rgba(0, 0, 0, 0.2);
+   z-index: 99;
+}
+
+.contentWrapper {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   border: 1px solid #D6D8E7;
+   box-sizing: border-box;
+   border-radius: 16px;
+   width: 600px;
+   height: 575px;
+   background-color: #fff;
+   flex-direction: column;
+   padding: 0% 7%;
+}
+
+.modalButton {
+   background: #EFF0F6;
+   border-radius: 9px;
+   width: 100px;
+   height: 38px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.modalButtonsWrapper {
+   display: flex;
+   width: 100%;
+   justify-content: space-around;
+}
+
+.checkboxLabel {
+
+   color: #6E7191;
+   font-size: 18px;
+   letter-spacing: 1px;
+}
+
+.checkboxWrapper {
+   display: flex;
+   justify-content: space-between;
+   margin: 5% 0%;
+}
+
+.genderWrapper {
+   width: 95%;
+}

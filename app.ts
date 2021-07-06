@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import config from 'config'
 
 import { authRouter } from './routes/auth.routes'
+import { profilesRouter } from './routes/profiles.routes'
 
 
 
@@ -14,6 +15,7 @@ const MONGO_URI: string = config.get(`MONGO_URI`)
 app.use(express.json())
 
 app.use(`/api/auth`, authRouter)
+app.use(`/api/profiles`, profilesRouter)
 
 
 const start = async () => {

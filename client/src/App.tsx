@@ -1,15 +1,25 @@
 import { BrowserRouter } from 'react-router-dom';
-import { useRoutes } from './routes';
+import { AuthContext } from './context/AuthContext';
+
+import { useAuth } from './hooks/useAuth';
+import AppRouter from './AppRouter';
 //import './App.css';
 
 const App = () => {
 
-   const routes = useRoutes(false)
+   const { token, login, logout, userId } = useAuth()
+   const isAuth = !!token
+
+
 
    return (
-      <BrowserRouter>
-         {routes}
-      </BrowserRouter>
+      <AuthContext.Provider value={{
+         token, login, logout, userId, isAuth
+      }}>
+         <BrowserRouter>
+            <AppRouter onLogout={logout} isAuth={isAuth} />
+         </BrowserRouter>
+      </AuthContext.Provider>
    )
 }
 

@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import {  useState,useContext } from 'react';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyCheckbox from '../../components/MyCheckbox/MyCheckbox';
 import MyInput from '../../components/MyInput/MyInput';
+import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/useHttp';
 import style from './RegisterPage.module.css';
 
 const LoginPage = () => {
 
+   const auth = useContext(AuthContext)
 
-   const { isLoading, request, error } = useHttp()
+   const { isLoading, request, error, clearError } = useHttp()
 
    const [userName, setUserName] = useState(``)
    const [email, setEmail] = useState(``)
@@ -17,14 +19,18 @@ const LoginPage = () => {
    const [isClicked, setIsClicked] = useState(false)
 
 
+
    const onUsernameChange = (value: string) => {
       setUserName(value)
+      clearError(`userName`)
    }
    const onEmailChange = (value: string) => {
       setEmail(value)
+      clearError(`email`)
    }
    const onPasswordChange = (value: string) => {
       setPassword(value)
+      clearError(`password`)
    }
 
    const onButtonClick = async () => {
@@ -32,11 +38,9 @@ const LoginPage = () => {
 
          const body = { email, password, userName, role: isClicked ? `admin` : `user` }
 
-         console.log(`Request body: `, body)
-         
+
          const data = await request({ url: `/api/auth/register`, method: `POST`, body })
 
-         console.log(`Response data`, data)
       } catch (e) {
 
       }
@@ -57,9 +61,12 @@ const LoginPage = () => {
             Create your account
          </div>
          <div className={style.inputs}>
-            <MyInput label={`Username`} value={userName} onTextChange={onUsernameChange} />
-            <MyInput label={`Email`} value={email} onTextChange={onEmailChange} />
-            <MyInput label={`Password`} value={password} onTextChange={onPasswordChange} type={`password`} />
+            <MyInput name={`userName`} label={`Username`} value={userName}
+               onTextChange={onUsernameChange} errorText={error ? error[`userName`] : null} />
+            <MyInput name={`email`} label={`Email`} value={email}
+               onTextChange={onEmailChange} errorText={error ? error[`email`] : null} />
+            <MyInput name={`password`} label={`Password`} value={password}
+               onTextChange={onPasswordChange} type={`password`} errorText={error ? error[`password`] : null} />
          </div>
          <div className={style.checkbox}>
             <MyCheckbox onClick={onCheckboxClick} isClicked={isClicked} label={`is admin`} />

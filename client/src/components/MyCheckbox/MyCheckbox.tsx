@@ -7,15 +7,16 @@ type MyCheckbox = {
    isClicked: boolean
    onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
    label?: string
+   isRound?: boolean
 }
 
-const MyCheckbox: FC<MyCheckbox> = ({ isClicked, onClick,label }) => {
+const MyCheckbox: FC<MyCheckbox> = ({ isClicked, onClick, label, isRound }) => {
    return (
-      <div onClick={onClick}  className={style.mainContainer}>
-         <div className={style.container}>
-            {isClicked && <div className={style.dot} />}
+      <div onClick={onClick} className={style.mainContainer}>
+         <div className={`${style.container} ${isRound ? style.circleCheckbox : ``}`}>
+            {isClicked && <div className={`${style.dot} ${isRound ? style.circleCheckbox : ``}`} />}
          </div>
-         {!!label && <div className={style.labelText}>{label}</div> }
+         {!!label && <div className={style.labelText}>{label}</div>}
       </div>
    )
 }

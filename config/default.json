@@ -1,6 +1,7 @@
 {
     "SERVER_PORT": 5000,
     "MONGO_URI": "mongodb+srv://Volodymyr:admin12345@cluster0.0kwvl.mongodb.net/CRUD_test_db?retryWrites=true&w=majority",
-    "jwtSecretKey": "CURDTestProject" 
+    "jwtSecretKey": "CURDTestProject",
+    "baseUrl": "http://localhost:5000"
 
 }

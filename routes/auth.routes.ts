@@ -31,7 +31,7 @@ router.post(
    ],
    async (req: Request<{}, {}, ReqRegisterT>, res: Response) => {
       try {
-         console.log(`BODY:`,req.body)
+         console.log(`BODY:`, req.body)
          const errors = validationResult(req)
 
          if (!errors.isEmpty()) {
@@ -46,7 +46,7 @@ router.post(
          const candidate = await User.findOne({ email })
 
          if (candidate) {
-            return res.status(400).json({ message: `This user alreasy exist` })
+            return res.status(400).json({ errors: [{ msg: `User already exist`, param: `email` }] })
          }
 
          const hashedPass = await bcrypt.hash(password, 11)
@@ -58,7 +58,7 @@ router.post(
 
 
       } catch (e) {
-         res.status(500).json({ message: `Server error: ${e.message}` })
+         res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
       }
    })
 
@@ -87,13 +87,13 @@ router.post(
          const user = await User.findOne({ email })
 
          if (!user) {
-            return res.status(400).json({ message: `User doesn't exist` })
+            return res.status(400).json({ errors: [{ msg: `User doesn't exist`, param: `password` }] })
          }
 
          const isMatchPass = await bcrypt.compare(password, user.password)
 
          if (!isMatchPass) {
-            return res.status(400).json({ message: `Wrong password or email (password)` })
+            return res.status(400).json({ errors: [{ msg: `Wrong password or email (password)`, param: `password` }] })
          }
 
 
@@ -108,8 +108,11 @@ router.post(
 
 
       } catch (e) {
-         res.status(500).json({ message: `Server error: ${e.message}` })
+         res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
       }
    })
+
+
+router.get(`/newToken`)
 
 export { router as authRouter }

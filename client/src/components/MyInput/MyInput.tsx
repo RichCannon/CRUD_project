@@ -6,16 +6,17 @@ type MyInput =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputEleme
    label: string
    value: string
    onTextChange: (value: string) => void
+   errorText?: string | null
 
 } 
 
 
-const MyInput: FC<MyInput> = ({ label, value, onTextChange, ...restProps }) => {
-
+const MyInput: FC<MyInput> = ({ label, value, onTextChange, errorText, ...restProps }) => {
    return (
       <div className={style.container}>
          <div className={style.label}>{label}</div>
-         <input className={style.input} value={value} onChange={(e) => onTextChange(e.target.value)} {...restProps}   />
+         <input className={`${style.input} ${!!errorText ? style.inputError : ``}`} value={value} onChange={(e) => onTextChange(e.target.value)} {...restProps}   />
+         <div className={style.error}>{errorText || ``}</div>
       </div>
    )
 }

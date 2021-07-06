@@ -13,8 +13,22 @@
    background-color: transparent;
 }
 
+.inputError {
+   border-bottom: 1px red solid;
+}
+
 .label {
    color: #6E7191;
    font-size: 18px;
    letter-spacing: 1px;
+}
+
+.error {
+   color: red;
+   font-size: 12px;
+   height: 20px;
+}
+
+.opacity0 {
+   opacity: 0
 }

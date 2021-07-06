@@ -7,17 +7,27 @@ type RequestT = {
    headers?: any;
 }
 
-type ErrorT = {
+type ErrorResponseT = {
    message: string
+   errors: {
+      location: string
+      msg: string
+      param: string
+      value: string
+   }[]
+}
+
+type ErrorFormattedT = {
+   [key: string]: string
 }
 
 export const useHttp = () => {
 
    const [isLoading, setIsLoading] = useState(false)
-   const [error, setError] = useState(null)
+   const [error, setError] = useState<ErrorFormattedT | null>(null)
 
 
-   const request = useCallback(async ({ url, method = `GET`, body = null, headers = {} }: RequestT) => {
+   const request = useCallback(async function<T> ({ url, method = `GET`, body = null, headers = {} }: RequestT): Promise<T> {
       setIsLoading(true)
       try {
          if (body) {
@@ -28,23 +38,42 @@ export const useHttp = () => {
 
          const response = await fetch(url, { method, body, headers })
 
-         const data: ErrorT = await response.json()
+         const data: ErrorResponseT | T = await response.json()
+
 
          if (!response.ok) {
-            throw new Error(data.message)
+            const newData = data as ErrorResponseT
+            const errorObj: ErrorFormattedT = {}
+            newData.errors.map(d => errorObj[d.param] = d.msg) 
+            throw errorObj
          }
+         setIsLoading(false)
+
+
+         return data as T
+
+      } catch (e) {
 
          setIsLoading(false)
-      } catch (e) {
-         setIsLoading(false)
-         setError(e.message)
+         setError(e)
          throw e
 
       }
    }, [])
 
-   const clearError = () => setError(null)
+   const clearError = (key?: string) => {
+      if (error) {
+         if (key) {
+            const newError = { ...error }
+            delete newError[key]
+            setError(newError)
+         }
+         else {
+            setError(null)
+         }
+      }
 
+   }
 
    return { isLoading, request, clearError, error }
 }
