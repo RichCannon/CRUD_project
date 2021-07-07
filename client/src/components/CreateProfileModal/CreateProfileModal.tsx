@@ -1,4 +1,5 @@
 import { FC } from 'react'
+
 import MyCheckbox from '../MyCheckbox/MyCheckbox'
 import MyInput from '../MyInput/MyInput'
 import CrossIcon from './assets/CrossIcon'
@@ -18,6 +19,10 @@ type CreateProfileModalProps = {
    gender: GenderT
    birthdate: string
    city: string
+   errorName?: string | null
+   errorCity?: string| null
+   errorBirthdate?: string| null
+   isLoading: boolean
 }
 
 const CreateProfileModal: FC<CreateProfileModalProps> = ({
@@ -30,14 +35,18 @@ const CreateProfileModal: FC<CreateProfileModalProps> = ({
    name,
    gender,
    birthdate,
-   city
+   city,
+   isLoading,
+   errorName = null,
+   errorCity = null,
+   errorBirthdate = null
 }) => {
 
 
    return (
-      <div className={style.container}>
-         <div className={style.contentWrapper}>
-            <MyInput value={name} onTextChange={onNameChange} label={`name:`} />
+      <div onClick={onDeclineClick} className={style.container}>
+         <div onClick={e => e.stopPropagation()} className={style.contentWrapper}>
+            <MyInput errorText={errorName} value={name} onTextChange={onNameChange} label={`name:`} />
             <div className={style.genderWrapper}>
                <div className={style.checkboxLabel}>{`gender:`}</div>
                <div className={style.checkboxWrapper}>
@@ -45,13 +54,13 @@ const CreateProfileModal: FC<CreateProfileModalProps> = ({
                   <MyCheckbox isRound label={`female`} isClicked={gender === `female`} onClick={() => onGenderChange(`female`)} />
                </div>
             </div>
-            <MyInput value={birthdate} onTextChange={onBirthDateChange} label={`birthdate:`} />
-            <MyInput value={city} onTextChange={onCityChange} label={`city:`} />
+            <MyInput errorText={errorBirthdate} value={birthdate} onTextChange={onBirthDateChange} label={`birthdate:`} />
+            <MyInput errorText={errorCity} value={city} onTextChange={onCityChange} label={`city:`} />
             <div className={style.modalButtonsWrapper}>
-               <div onClick={onAcceptClick} className={style.modalButton}>
+               <div onClick={isLoading ? () => { } : onAcceptClick} className={style.modalButton}>
                   <DoneIcon />
                </div>
-               <div onClick={onDeclineClick} className={style.modalButton}>
+               <div onClick={isLoading ? () => { } : onDeclineClick} className={style.modalButton}>
                   <CrossIcon />
                </div>
             </div>

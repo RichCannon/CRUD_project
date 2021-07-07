@@ -1,5 +1,6 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext'
 
 import { DashboardIcon } from './assets/DashboardIcon'
 import { ProfilesIcon } from './assets/ProfilesIcon'
@@ -14,17 +15,19 @@ const Header: FC<Header> = ({ onLogout }) => {
 
    const history = useHistory()
 
+   const { userData } = useContext(AuthContext)
+
    const onLogoutClick = () => {
       onLogout()
-     // history.push(`/`)
+      // history.push(`/`)
 
    }
 
    return (
       <div className={style.container}>
          <div className={style.leftTab}>
-            <div className={style.avatar}></div>
-            <div className={style.userNameText}>{`RichCannon`}</div>
+            <div className={`${style.avatar} ${userData.role === `admin` ? style.adminAvatar : ``}`}></div>
+            <div className={style.userNameText}>{userData.userName}</div>
          </div>
          <div className={style.rightTab}>
             <div className={style.headerTabs}>
@@ -36,13 +39,16 @@ const Header: FC<Header> = ({ onLogout }) => {
                   <div className={style.headerTabLabel}>{`Dashboard`}</div>
                   <DashboardIcon />
                </NavLink>
-               <NavLink to={`/users`} className={style.headerTab}>
-                  <div className={style.headerTabLabel}>{`Users`}</div>
-                  <UsersIcon />
-               </NavLink>
+               {
+                  userData.role === `admin` &&
+                  <NavLink to={`/users`} className={style.headerTab}>
+                     <div className={style.headerTabLabel}>{`Users`}</div>
+                     <UsersIcon />
+                  </NavLink>
+               }
             </div>
             <div className={style.logOutButton}>
-               <div  onClick={onLogoutClick} className={style.headerTab}>
+               <div onClick={onLogoutClick} className={style.headerTab}>
                   <div className={style.headerTabLabel}>{`Log out`}</div>
                </div>
             </div>

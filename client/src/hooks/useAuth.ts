@@ -17,10 +17,12 @@ const STORAGE_NAME = `userData`
 export const useAuth = () => {
    const [token, setToken] = useState<string | null>(null)
    const [userId, setUserId] = useState<string | null>(null)
+   const [isReady, setIsReady] = useState(false)
+
 
    const login = useCallback(({ jwtToken, id }: LoginParams) => {
       setToken(jwtToken)
-      setToken(id)
+      setUserId(id)
 
       const dataToStore: UserDataToStore = {
          token: jwtToken,
@@ -41,7 +43,7 @@ export const useAuth = () => {
    useEffect(() => {
       const storeData: UserDataToStore = JSON.parse(localStorage.getItem(STORAGE_NAME) || "{\"token\":null,\"userId\":null}")
 
-      
+
 
       if (storeData && storeData.token) {
 
@@ -56,7 +58,10 @@ export const useAuth = () => {
          setUserId(storeData.userId)
          //login({ jwtToken: storeData.token, id: storeData.userId })
       }
+
+      setIsReady(true)
+      
    }, [login, logout])
 
-   return { login, logout, token, userId }
+   return { login, logout, token, userId, isReady }
 }

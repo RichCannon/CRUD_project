@@ -1,10 +1,12 @@
 import { Schema, model, Types } from 'mongoose'
+import { ProfilesT } from './Profiles'
 
 type UserT = {
    userName: string
    email: string
    password: string
    role: `admin` | `user`
+   profiles: ProfilesT  []
 }
 
 const schema = new Schema<UserT>({

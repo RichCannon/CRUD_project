@@ -68,3 +68,7 @@
    justify-content: space-between;
   
 }
+
+.adminAvatar {
+   border: 1.5px solid #00BA88;
+}

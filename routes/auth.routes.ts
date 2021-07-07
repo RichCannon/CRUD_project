@@ -31,7 +31,6 @@ router.post(
    ],
    async (req: Request<{}, {}, ReqRegisterT>, res: Response) => {
       try {
-         console.log(`BODY:`, req.body)
          const errors = validationResult(req)
 
          if (!errors.isEmpty()) {

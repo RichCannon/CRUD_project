@@ -1,0 +1,21 @@
+.container {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   background: #FFFFFF;
+   border: 1px solid #D6D8E7;
+   box-sizing: border-box;
+   border-radius: 32px;
+   padding: 69px;
+   margin-right: 5%;
+}
+
+.title {
+   font-size: 36px;
+}
+
+.amount {
+   font-weight: 600;
+font-size: 48px;
+}

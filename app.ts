@@ -4,6 +4,8 @@ import config from 'config'
 
 import { authRouter } from './routes/auth.routes'
 import { profilesRouter } from './routes/profiles.routes'
+import { userRouter } from './routes/user.routes'
+import { dashboardRouter } from './routes/dashboard.routes'
 
 
 
@@ -16,6 +18,8 @@ app.use(express.json())
 
 app.use(`/api/auth`, authRouter)
 app.use(`/api/profiles`, profilesRouter)
+app.use(`/api/user`, userRouter)
+app.use(`/api/dashboard`, dashboardRouter)
 
 
 const start = async () => {

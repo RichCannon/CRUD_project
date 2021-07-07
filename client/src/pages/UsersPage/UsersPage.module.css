@@ -1,0 +1,19 @@
+.container {
+   flex: 1
+}
+
+
+.title {
+   font-size: 36px;
+}
+
+.content {
+
+   display: flex;
+   flex-wrap: wrap;
+}
+
+.cardWrapper {
+   margin: 2% 2%;
+   box-sizing: border-box;
+}

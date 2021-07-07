@@ -2,7 +2,6 @@ import { FC } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import Header from './components/Header/Header'
-import { useAuth } from './hooks/useAuth'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import ProfilesPage from './pages/ProfilesPage/ProfilesPage'

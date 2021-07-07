@@ -1,0 +1,19 @@
+.container {
+   display: flex;
+   width: 396px;
+   height: 208px;
+   border: 1px solid #D6D8E7;
+   box-sizing: border-box;
+   border-radius: 16px;
+   background: #FFFFFF;
+
+   flex-direction: column;
+   justify-content: space-evenly;
+}
+
+.infoText {
+
+   font-size: 24px;
+   color: #4E4B66;
+   text-align: center;
+}

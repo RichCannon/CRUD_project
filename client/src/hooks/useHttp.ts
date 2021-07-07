@@ -2,9 +2,9 @@ import { useCallback, useState } from "react"
 
 type RequestT = {
    url: string,
-   method?: `GET` | `POST` | `PUT` | `DELETE`,
+   method?: `GET` | `POST` | `PUT` | `DELETE` | `PATCH`,
    body?: any
-   headers?: any;
+   headers?: Headers | {};
 }
 
 type ErrorResponseT = {
@@ -27,12 +27,12 @@ export const useHttp = () => {
    const [error, setError] = useState<ErrorFormattedT | null>(null)
 
 
-   const request = useCallback(async function<T> ({ url, method = `GET`, body = null, headers = {} }: RequestT): Promise<T> {
+   const request = useCallback(async function <T>({ url, method = `GET`, body = null, headers = {} }: RequestT): Promise<T> {
       setIsLoading(true)
       try {
          if (body) {
             body = JSON.stringify(body)
-            headers[`Content-Type`] = `application/json`
+            headers = { "content-type": "application/json", ...headers }
          }
 
 
@@ -44,7 +44,7 @@ export const useHttp = () => {
          if (!response.ok) {
             const newData = data as ErrorResponseT
             const errorObj: ErrorFormattedT = {}
-            newData.errors.map(d => errorObj[d.param] = d.msg) 
+            newData.errors.map(d => errorObj[d.param] = d.msg)
             throw errorObj
          }
          setIsLoading(false)
