@@ -23,7 +23,7 @@ const AppRouter: FC<AppRouterProps> = ({ isAuth, onLogout }) => {
             <Header onLogout={onLogout} />
             <div className={style.container}>
                <Switch>
-                  <Route path={`/profiles`}>
+                  <Route  path={`/profiles/:id?`}>
                      <ProfilesPage />
                   </Route>
                   <Route path={`/dashboard`}>
@@ -32,7 +32,7 @@ const AppRouter: FC<AppRouterProps> = ({ isAuth, onLogout }) => {
                   <Route path={`/users`}>
                      <UsersPage />
                   </Route>
-                  <Redirect to={`/profiles`} />
+                  <Redirect to={`/profiles/:id?`} />
                </Switch>
             </div>
          </>

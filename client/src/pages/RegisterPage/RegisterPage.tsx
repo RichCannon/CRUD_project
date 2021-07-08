@@ -1,4 +1,5 @@
-import {  useState,useContext } from 'react';
+import { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyCheckbox from '../../components/MyCheckbox/MyCheckbox';
@@ -54,7 +55,6 @@ const LoginPage = () => {
 
 
 
-
    return (
       <div className={style.container}>
          <div className={style.title}>
@@ -65,8 +65,9 @@ const LoginPage = () => {
                onTextChange={onUsernameChange} errorText={error ? error[`userName`] : null} />
             <MyInput name={`email`} label={`Email`} value={email}
                onTextChange={onEmailChange} errorText={error ? error[`email`] : null} />
-            <MyInput name={`password`} label={`Password`} value={password}
+            <MyInput name={`password`} label={`Password`} value={password} onEnterPress={onButtonClick}
                onTextChange={onPasswordChange} type={`password`} errorText={error ? error[`password`] : null} />
+
          </div>
          <div className={style.checkbox}>
             <MyCheckbox onClick={onCheckboxClick} isClicked={isClicked} label={`is admin`} />
@@ -74,6 +75,8 @@ const LoginPage = () => {
          <div className={style.button}>
             <MyButton onButtonClick={onButtonClick} label={`Sign Up`} isDisabled={isLoading} />
          </div>
+
+         <Link to={`/login`}>{`Already have account? Sign in`}</Link>
       </div>
    )
 }

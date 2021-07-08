@@ -3,7 +3,6 @@ import { check, validationResult } from 'express-validator'
 
 import { authMiddleware, RequestWithId } from '../middleware/auth.middleware'
 import { birthdateValidate } from '../middleware/validators'
-import { authRouter } from './auth.routes'
 
 
 import { Profiles, ProfilesT } from './models/Profiles'
@@ -13,7 +12,24 @@ import { User } from './models/User'
 const router = Router()
 
 
-type ProfilesCreateReq = ProfilesT
+type ProfilesCreateReq = {
+   name: string,
+   gender: `male` | 'female'
+   birthdate: string
+   city: string
+   owner?: string
+   _id?: string
+}
+
+
+const birthdateToMs = (date: string) => {
+   const frmtdBirthdateArr = date.split(`.`)
+   return +new Date(+frmtdBirthdateArr[2], +frmtdBirthdateArr[1] - 1, +frmtdBirthdateArr[0])
+}
+
+
+
+
 
 
 // Request to create profile
@@ -38,7 +54,12 @@ router.post(
             })
          }
 
-         const profiles = new Profiles({ ...req.body, owner: req.myId })
+         const { birthdate, ...restBody } = req.body
+
+         const msBirthdate = birthdateToMs(birthdate)
+
+         const profiles = new Profiles({ ...restBody, birthdate: msBirthdate,  owner: req.myId })
+         // Add objectId of profile to users profile
          await User.updateOne({ _id: req.myId }, {
             "$push": {
                profiles: profiles._id
@@ -72,7 +93,11 @@ router.patch(
    async (req: RequestWithId<{}, {}, ProfilesModifyReq>, res: Response) => {
       try {
 
-         const { _id, owner, ...restBody } = req.body
+         const { _id, birthdate, ...restBody } = req.body
+
+
+         const msBirthdate = birthdateToMs(birthdate)
+
          const errors = validationResult(req)
 
          if (!errors.isEmpty()) {
@@ -88,8 +113,9 @@ router.patch(
             throw { errors: [{ msg: `Profile doesn't exit`, param: `server` }] }
          }
 
+         // Update profile if you are owner or admin
          if (`${profile.owner}` === req.myId || req.myRole === `admin`) {
-            await Profiles.updateOne({ _id }, restBody)
+            await Profiles.updateOne({ _id }, { ...restBody, birthdate: msBirthdate })
             res.json({ message: `Profile succesfully updated!` })
          }
          else {
@@ -105,26 +131,25 @@ router.patch(
    })
 
 
-router.get(
-   `/:id`,
-   authMiddleware,
-   async (req: RequestWithId<{}, {}, ProfilesCreateReq>, res: Response) => {
-      try {
-         res.json({ data: `data` })
-      } catch (e) {
-         res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
-      }
-   })
 
 
 // Get my profiles
 router.get(
-   `/`,
+   `/:id?`,
    authMiddleware,
-   async (req: RequestWithId<{}, {}, ProfilesCreateReq>, res: Response) => {
+   async (req: RequestWithId<{ id: string }, {}, ProfilesCreateReq>, res: Response) => {
       try {
 
-         const profiles = await Profiles.find({ owner: req.myId })
+         // Get profiles of user 
+         // If you are admin you can get profiles of all users 
+         // If you are user you get only yours profile
+         const profiles = await Profiles.find(
+            {
+               owner: req.params.id && req.myRole === `admin`
+                  ? req.params.id
+                  : req.myId
+            }
+         )
 
          res.json(profiles)
 
@@ -154,6 +179,7 @@ router.delete(
 
          if (`${profile.owner}` === req.myId || req.myRole === `admin`) {
             await Profiles.deleteOne({ _id: req.body._id })
+            // Remove objectId from users profile
             await User.updateOne({ _id: req.myId }, {
                "$pull": {
                   profiles: req.body._id

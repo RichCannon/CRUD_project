@@ -1,0 +1,15 @@
+.modalButton {
+   background: #EFF0F6;
+   border-radius: 9px;
+   width: 100px;
+   height: 38px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.modalButtonsWrapper {
+   display: flex;
+   width: 100%;
+   justify-content: space-around;
+}

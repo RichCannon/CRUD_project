@@ -6,7 +6,7 @@
    box-sizing: border-box;
    border-radius: 16px;
    background: #FFFFFF;
-
+   text-decoration: none;
    flex-direction: column;
    justify-content: space-evenly;
 }

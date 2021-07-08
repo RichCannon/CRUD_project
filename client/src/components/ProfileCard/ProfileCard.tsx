@@ -1,5 +1,6 @@
 
 import { FC } from 'react'
+import { msToBirthdate } from '../../utils/birtdateToMs'
 
 import style from './ProfileCard.module.css'
 
@@ -9,7 +10,7 @@ type ProfileCard = {
    data: {
       name: string,
       gender: `male` | 'female'
-      birthdate: string
+   birthdate: number
       city: string
    }
 }
@@ -22,7 +23,7 @@ const ProfileCard: FC<ProfileCard> = ({ onEditPress, onDeletePress, data: { name
          <div className={style.infoWrapper}>
             <div className={style.infoText}>{name}</div>
             <div className={style.infoText}>{gender}</div>
-            <div className={style.infoText}>{birthdate}</div>
+            <div className={style.infoText}>{msToBirthdate(birthdate)}</div>
             <div className={style.infoText}>{city}</div>
          </div>
          <div className={style.buttons}>

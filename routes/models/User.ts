@@ -6,7 +6,7 @@ type UserT = {
    email: string
    password: string
    role: `admin` | `user`
-   profiles: ProfilesT  []
+   profiles: string[]
 }
 
 const schema = new Schema<UserT>({

@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react"
 
-type RequestT = {
+type RequestT<B> = {
    url: string,
    method?: `GET` | `POST` | `PUT` | `DELETE` | `PATCH`,
-   body?: any
+   body?: B | null
    headers?: Headers | {};
 }
 
@@ -27,28 +27,34 @@ export const useHttp = () => {
    const [error, setError] = useState<ErrorFormattedT | null>(null)
 
 
-   const request = useCallback(async function <T>({ url, method = `GET`, body = null, headers = {} }: RequestT): Promise<T> {
+   const request = useCallback(async function <T, B = any>({ url, method = `GET`, body = null, headers = {} }: RequestT<B>): Promise<T> {
       setIsLoading(true)
       try {
+
+         let jsonBody = null
          if (body) {
-            body = JSON.stringify(body)
+            jsonBody = JSON.stringify(body)
             headers = { "content-type": "application/json", ...headers }
          }
 
 
-         const response = await fetch(url, { method, body, headers })
+         const response = await fetch(url, { method, body: jsonBody, headers })
 
          const data: ErrorResponseT | T = await response.json()
+
+
 
 
          if (!response.ok) {
             const newData = data as ErrorResponseT
             const errorObj: ErrorFormattedT = {}
             newData.errors.map(d => errorObj[d.param] = d.msg)
+            if (response.status === 500) {
+               alert(`Some problems on server`)
+            }
             throw errorObj
          }
          setIsLoading(false)
-
 
          return data as T
 

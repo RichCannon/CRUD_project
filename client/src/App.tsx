@@ -5,7 +5,7 @@ import { AuthContext, UserDataT } from './context/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import AppRouter from './AppRouter';
 import { useHttp } from './hooks/useHttp';
-import { GET_USER_URL, RoleT } from './types/types';
+import { GET_USER_URL } from './types/types';
 import Preloader from './components/Preloader/Preloader';
 //import './App.css';
 

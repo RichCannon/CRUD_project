@@ -1,0 +1,18 @@
+
+
+.checkboxLabel {
+
+   color: #6E7191;
+   font-size: 18px;
+   letter-spacing: 1px;
+}
+
+.checkboxWrapper {
+   display: flex;
+   justify-content: space-between;
+   margin: 5% 0%;
+}
+
+.genderWrapper {
+   width: 95%;
+}

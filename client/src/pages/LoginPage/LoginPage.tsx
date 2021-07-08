@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyInput from '../../components/MyInput/MyInput';
@@ -34,6 +35,7 @@ const LoginPage = () => {
       clearError(`email`)
    }
    const onPasswordChange = (value: string) => {
+
       setPassword(value)
       clearError(`email`)
    }
@@ -57,11 +59,14 @@ const LoginPage = () => {
             <MyInput name={`email`} label={`Email`} value={email}
                onTextChange={onEmailChange} errorText={error ? error[`email`] : null} />
             <MyInput name={`password`} label={`Password`} value={password}
-               onTextChange={onPasswordChange} type={`password`} errorText={error ? error[`password`] : null} />
+               onTextChange={onPasswordChange} type={`password`} 
+               onEnterPress={onButtonClick}
+               errorText={error ? error[`password`] : null} />
          </div>
          <div className={style.button}>
             <MyButton isDisabled={isLoading} onButtonClick={onButtonClick} label={`Sign In`} />
          </div>
+         <Link to={`/register`}>{`Don't have account? Sign up`}</Link>
       </div>
    )
 }

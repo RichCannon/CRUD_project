@@ -24,36 +24,3 @@
    flex-direction: column;
    padding: 0% 7%;
 }
-
-.modalButton {
-   background: #EFF0F6;
-   border-radius: 9px;
-   width: 100px;
-   height: 38px;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-}
-
-.modalButtonsWrapper {
-   display: flex;
-   width: 100%;
-   justify-content: space-around;
-}
-
-.checkboxLabel {
-
-   color: #6E7191;
-   font-size: 18px;
-   letter-spacing: 1px;
-}
-
-.checkboxWrapper {
-   display: flex;
-   justify-content: space-between;
-   margin: 5% 0%;
-}
-
-.genderWrapper {
-   width: 95%;
-}
