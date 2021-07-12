@@ -3,14 +3,14 @@ import { FC } from "react"
 import style from './MyCheckbox.module.css';
 
 
-type MyCheckbox = {
+type MyCheckboxProps = {
    isClicked: boolean
    onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
    label?: string
    isRound?: boolean
 }
 
-const MyCheckbox: FC<MyCheckbox> = ({ isClicked, onClick, label, isRound }) => {
+const MyCheckbox: FC<MyCheckboxProps> = ({ isClicked, onClick, label, isRound }) => {
    return (
       <div onClick={onClick} className={style.mainContainer}>
          <div className={`${style.container} ${isRound ? style.circleCheckbox : ``}`}>

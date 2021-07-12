@@ -1,16 +1,15 @@
-import { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyCheckbox from '../../components/MyCheckbox/MyCheckbox';
 import MyInput from '../../components/MyInput/MyInput';
-import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/useHttp';
 import style from './RegisterPage.module.css';
 
 const LoginPage = () => {
 
-   const auth = useContext(AuthContext)
+   const history = useHistory()
 
    const { isLoading, request, error, clearError } = useHttp()
 
@@ -39,8 +38,11 @@ const LoginPage = () => {
 
          const body = { email, password, userName, role: isClicked ? `admin` : `user` }
 
+         await request({ url: `/api/auth/register`, method: `POST`, body })
 
-         const data = await request({ url: `/api/auth/register`, method: `POST`, body })
+         alert(`Account succesfuly created! Please login`)
+
+         history.push('/login')
 
       } catch (e) {
 
@@ -73,7 +75,7 @@ const LoginPage = () => {
             <MyCheckbox onClick={onCheckboxClick} isClicked={isClicked} label={`is admin`} />
          </div>
          <div className={style.button}>
-            <MyButton onButtonClick={onButtonClick} label={`Sign Up`} isDisabled={isLoading} />
+            <MyButton isLoading={isLoading} onButtonClick={onButtonClick} label={`Sign Up`} isDisabled={isLoading} />
          </div>
 
          <Link to={`/login`}>{`Already have account? Sign in`}</Link>

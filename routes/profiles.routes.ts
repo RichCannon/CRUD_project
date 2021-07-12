@@ -58,7 +58,11 @@ router.post(
 
          const msBirthdate = birthdateToMs(birthdate)
 
-         const profiles = new Profiles({ ...restBody, birthdate: msBirthdate,  owner: req.myId })
+         if (msBirthdate >= Date.now()) {
+            return res.status(400).json({ errors: [{ msg: `Birthdate can't be greater than today date`, param: `birthdate` }] })
+         }
+
+         const profiles = new Profiles({ ...restBody, birthdate: msBirthdate, owner: req.myId })
          // Add objectId of profile to users profile
          await User.updateOne({ _id: req.myId }, {
             "$push": {

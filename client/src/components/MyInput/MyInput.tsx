@@ -2,7 +2,7 @@ import { FC,KeyboardEvent } from 'react';
 
 import style from './MyInput.module.css';
 
-type MyInput =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+type MyInputProps =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
    label: string
    value: string
    onTextChange: (value: string) => void
@@ -12,7 +12,7 @@ type MyInput =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputEleme
 } 
 
 
-const MyInput: FC<MyInput> = ({ label, value, onTextChange,onEnterPress, errorText, ...restProps }) => {
+const MyInput: FC<MyInputProps> = ({ label, value, onTextChange,onEnterPress, errorText, ...restProps }) => {
 
    const onKeyPress = (e:KeyboardEvent<HTMLInputElement>) => {
       if(e.nativeEvent.key === `Enter` && onEnterPress) {

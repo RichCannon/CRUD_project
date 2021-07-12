@@ -1,5 +1,5 @@
 import { Router, Response, Request } from "express";
-import { check } from "express-validator";
+import { check, validationResult } from "express-validator";
 import { RoleT } from "../client/src/types/types";
 
 import { authMiddleware, RequestWithId } from "../middleware/auth.middleware";
@@ -40,13 +40,13 @@ router.get(
 router.get(
    `/`,
    authMiddleware,
-   async (req: RequestWithId<{}, {}, {}>, res: Response) => {
+   async (req: RequestWithId, res: Response) => {
       try {
 
          if (req.myRole === `admin`) {
             const users = await User.find()
 
-            res.json(users.map(d => ({
+            return res.status(200).json(users.map(d => ({
                email: d.email,
                numOfProfiles: d.profiles.length,
                userName: d.userName,
@@ -55,7 +55,7 @@ router.get(
             })))
          }
          else {
-            res.status(403).json({ message: `Permission denied` })
+            return res.status(403).json({ message: `Permission denied` })
          }
       } catch (e) {
          res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
@@ -74,22 +74,32 @@ router.patch(
    `/modify`,
    [
       authMiddleware,
-      check(`email`, `Enter data`).notEmpty(),
-      check(`userName`, `Enter data`).notEmpty(),
+      check(`userName`, `Min userName length 5 symbols and max 25`)
+         .isLength({ min: 5, max: 25 }),
+      check(`email`, `Invalid email`).isEmail(),
    ],
    async (req: RequestWithId<{}, {}, PatchUserData>, res: Response) => {
       try {
 
-
          const { userId, ...restBody } = req.body
 
-         if (req.myRole !== `admin`) {
-            return res.status(403).json({ message: `You don't have permission` })
+
+         const errors = validationResult(req)
+
+         if (!errors.isEmpty()) {
+            return res.status(400).json({
+               errors: errors.array(),
+               message: `Wrong modify profile data format`
+            })
          }
 
+         if (req.myRole !== `admin`) {
+            return res.status(403).json({ errors: [{ msg: `You don't have permission`, param: `auth` }] })
+
+         }
 
          if (!userId) {
-            return res.status(404).json({ message: `This user doesn't exist` })
+            return res.status(404).json({ errors: [{ msg: `This user doesn't exist`, param: `user` }] })
          }
 
          await User.updateOne({ _id: userId }, restBody)
@@ -106,9 +116,6 @@ type DeleteUserT = {
    userId: string
 }
 
-
-// 60e6c06ef76f5740d64906cd
-// 60e6d3db0e4b135370d7b6a1
 router.delete(
    `/delete`,
    [
@@ -121,13 +128,14 @@ router.delete(
          const { userId } = req.body
 
          if (req.myRole !== `admin`) {
-            return res.status(403).json({ message: `You don't have permission` })
+            return res.status(403).json({ errors: [{ msg: `You don't have permission`, param: `user` }] })
+
          }
 
          const user = await User.findOne({ _id: userId })
 
          if (!user) {
-            return res.status(404).json({ message: `User not found` })
+            return res.status(404).json({ errors: [{ msg: `User not found`, param: `user` }] })
          }
 
          const data = await Profiles.deleteMany({
@@ -139,11 +147,11 @@ router.delete(
 
 
          if (!userId) {
-            return res.status(404).json({ message: `This user doesn't exist` })
+            return res.status(404).json({ errors: [{ msg: `This user doesn't exist`, param: `user` }] })
          }
 
          await User.deleteOne({ _id: userId })
-         res.json({ message: `User modified deleted` })
+         res.json({ message: `User deleted` })
 
       } catch (e) {
          console.log(e)

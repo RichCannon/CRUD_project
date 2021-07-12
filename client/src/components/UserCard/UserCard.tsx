@@ -5,7 +5,7 @@ import { RoleT } from '../../types/types'
 import style from './UserCard.module.css'
 
 
-type UserCard = {
+type UserCardProps = {
    userName: string
    email: string
    numOfProfiles: number
@@ -13,7 +13,7 @@ type UserCard = {
    role: RoleT
 }
 
-const UserCard: FC<UserCard> = ({ userName, email, numOfProfiles, userId, role }) => {
+const UserCard: FC<UserCardProps> = ({ userName, email, numOfProfiles, userId, role }) => {
 
 
    return (

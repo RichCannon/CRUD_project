@@ -1,16 +1,20 @@
 import { useState, useContext, useEffect } from 'react'
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+
 import ContentModalProfile from '../../components/ContentModalProfile/ContentModalProfile';
 import ContentModalUser from '../../components/ContentModalUser/ContentModalUser';
-
 import CreateProfileButton from '../../components/CreateProfileButton/CreateProfileButton';
 import CreateProfileModal from '../../components/CreateProfileModal/CreateProfileModal';
 import Preloader from '../../components/Preloader/Preloader';
 import ProfileCard from '../../components/ProfileCard/ProfileCard';
 import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/useHttp';
-import { CreateProfileBody, CREATE_PROFILE_URL, DELETE_PROFILE_URL, DELETE_USER_URL, GenderT, GET_PROFILES_URL, GET_USER_URL, PATCH_PROFILE_URL, PATCH_USER_URL, RoleT } from '../../types/types';
-import { birthdateToMs, msToBirthdate } from '../../utils/birtdateToMs';
+import {
+   CreateProfileBody, CREATE_PROFILE_URL, DELETE_PROFILE_URL,
+   DELETE_USER_URL, GenderT, GET_PROFILES_URL, GET_USER_URL,
+   PATCH_PROFILE_URL, PATCH_USER_URL, RoleT
+} from '../../types/types';
+import { msToBirthdate } from '../../utils/birtdateToMs';
 import { BucketIcon } from './assets/BucketIcon';
 import { EditIcon } from './assets/EditIcon';
 import style from './ProfilesPage.module.css';
@@ -33,7 +37,6 @@ const ProfilesPage = () => {
 
    const { id: userId } = useParams<{ id?: string }>()
 
-   // const { state: userData } = useLocation<UserDataT>()
 
    const history = useHistory()
 
@@ -59,15 +62,23 @@ const ProfilesPage = () => {
       clearError()
    }
 
+
    const [currentEdit, setCurrentEdit] = useState<{ owner?: string, _id: string }>({ owner: ``, _id: `` })
 
    const [profilesData, setProfilesData] = useState<CreateProfileBody[]>([])
 
    const { request, isLoading, error, clearError } = useHttp()
+
    const { request: getProfileDataRequest,
       isLoading: profileDataLoading,
       error: profileDataErorr,
       clearError: profileDataClError } = useHttp()
+
+   useEffect(() => {
+      if (profileDataErorr) {
+         alert(profileDataErorr)
+      }
+   }, [profileDataErorr])
 
 
    const getProfileData = async (userId?: string) => {
@@ -77,13 +88,12 @@ const ProfilesPage = () => {
          url: URL,
          headers: { authorization: `Bearer ${auth.token}` }
       })
-      if (!profileDataErorr) {
-         setProfilesData(data)
-      }
-      else {
-         //  alert(profileDataErorr)
-      }
+
+      setProfilesData(data)
+      profileDataClError()
    }
+
+
 
    const getUserData = async () => {
       const user = await request<UserDataT>({
@@ -121,27 +131,20 @@ const ProfilesPage = () => {
 
 
    const onDeletePress = async (_id?: string) => {
-      const data = await getProfileDataRequest<CreateProfileBody[]>({
+      await getProfileDataRequest<CreateProfileBody[]>({
          url: DELETE_PROFILE_URL,
          method: `DELETE`,
          body: { _id },
          headers: { authorization: `Bearer ${auth.token}` }
       })
-      if (!profileDataErorr) {
-         const data = await getProfileDataRequest<CreateProfileBody[]>({
-            url: GET_PROFILES_URL,
-            headers: { authorization: `Bearer ${auth.token}` }
-         })
-         if (!profileDataErorr) {
-            setProfilesData(data)
-         }
-         else {
-            // alert(profileDataErorr)
-         }
-      }
-      else {
-         // alert(profileDataErorr)
-      }
+
+      const profileData = await getProfileDataRequest<CreateProfileBody[]>({
+         url: GET_PROFILES_URL,
+         headers: { authorization: `Bearer ${auth.token}` }
+      })
+
+      setProfilesData(profileData)
+
    }
 
    const onAddProfileClick = () => {
@@ -158,7 +161,7 @@ const ProfilesPage = () => {
 
       if (currentEdit._id && currentEdit.owner) {
 
-         const data = await request({
+         await request({
             url: PATCH_PROFILE_URL,
             body: { ...body, ...currentEdit },
             method: `PATCH`,
@@ -167,7 +170,7 @@ const ProfilesPage = () => {
 
       }
       else {
-         const data = await request({
+         await request({
             url: CREATE_PROFILE_URL,
             body,
             method: `POST`,
@@ -215,7 +218,7 @@ const ProfilesPage = () => {
    }
 
    const onUserNameChange = (value: string) => {
-      clearError(`email`)
+      clearError(`userName`)
       setUserName(value)
    }
 
@@ -224,18 +227,19 @@ const ProfilesPage = () => {
    }
 
    const onAcceptUserClick = async () => {
-      setIsVisibleUserModal(false)
       const body: UserDataT = {
          email, userName, role, userId
       }
 
-      const data = request({
+      await request({
          url: PATCH_USER_URL, body, method: `PATCH`, headers: {
             authorization: `Bearer ${auth.token}`
          }
       })
+
       getUserData()
       clearError()
+      setIsVisibleUserModal(false)
    }
 
    const onDeclineUserClick = () => {
@@ -248,7 +252,7 @@ const ProfilesPage = () => {
    }
 
    const onDeleteIconClick = async () => {
-      const data = await request({
+      await request({
          url: DELETE_USER_URL, body: { userId },
          method: `DELETE`,
          headers: {
@@ -256,7 +260,6 @@ const ProfilesPage = () => {
          }
       })
       history.push(`/users`)
-      console.log(data)
    }
 
 
@@ -298,6 +301,8 @@ const ProfilesPage = () => {
                         role={role}
                         email={email}
                         isLoading={isLoading}
+                        errorUserName={error && error[`userName`]}
+                        errorEmail={error && error[`email`]}
 
                      />
                   </CreateProfileModal>}
@@ -322,7 +327,7 @@ const ProfilesPage = () => {
                            onDeletePress={() => onDeletePress(d._id)} />
                      </div >
                   ))}
-                  <CreateProfileButton onClick={onAddProfileClick} />
+                  {!userId && <CreateProfileButton onClick={onAddProfileClick} />}
                </div>
             </>}
       </div>

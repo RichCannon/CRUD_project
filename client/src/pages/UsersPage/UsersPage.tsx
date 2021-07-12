@@ -10,24 +10,40 @@ import style from './UsersPage.module.css';
 
 const UsersPage = () => {
 
-   const { request, error, isLoading } = useHttp()
+   const { request, error, isLoading, clearError } = useHttp()
 
    const auth = useContext(AuthContext)
 
+   const history = useHistory()
+
    const [usersData, setUsersData] = useState<UserT[]>([])
+
+   useEffect(() => {
+      if (error) {
+         clearError()
+      }
+   }, [error])
 
 
    useEffect(() => {
-      (async () => {
-         const users = await request<UserT[]>({
-            url: GET_USER_URL, headers: {
-               authorization: `Bearer ${auth.token}`
-            }
-         })
 
-         setUsersData(users)
-      })()
-   }, [])
+      if (auth.userData.role !== `admin`) {
+         history.push(`/profiles`)
+
+      }
+      else {
+         (async () => {
+            const users = await request<UserT[]>({
+               url: GET_USER_URL, headers: {
+                  authorization: `Bearer ${auth.token}`
+               }
+            })
+
+            setUsersData(users)
+         })()
+
+      }
+   }, [auth.token, request])
 
 
 
@@ -42,7 +58,7 @@ const UsersPage = () => {
                      <div key={`USER_CARD_${idx}`} className={style.cardWrapper}>
                         <UserCard
                            role={d.role}
-                           userId={d._id}
+                           userId={auth.userId !== d._id ? d._id : ``}
                            userName={d.userName}
                            numOfProfiles={d.numOfProfiles}
                            email={d.email} />

@@ -7,6 +7,7 @@ type UserT = {
    password: string
    role: `admin` | `user`
    profiles: string[]
+   lastTokenTimestamp: number
 }
 
 const schema = new Schema<UserT>({
@@ -14,7 +15,8 @@ const schema = new Schema<UserT>({
    email: { type: String, requires: true, unique: true },
    password: { type: String, requires: true },
    role: { type: String, requires: true },
-   profiles: [{ type: Types.ObjectId, ref: `Profiles` }]
+   profiles: [{ type: Types.ObjectId, ref: `Profiles` }],
+   lastTokenTimestamp: {type: Date, requires: true}
 
 })
 

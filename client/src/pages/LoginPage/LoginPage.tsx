@@ -5,13 +5,11 @@ import MyButton from '../../components/MyButton/MyButton';
 import MyInput from '../../components/MyInput/MyInput';
 import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/useHttp';
+import { LoginResponseT } from '../../types/types';
 import style from './LoginPage.module.css';
 
 
-type LoginResponseT = {
-   token: string
-   userId: string
-}
+
 
 const LoginPage = () => {
 
@@ -43,7 +41,9 @@ const LoginPage = () => {
    const onButtonClick = async () => {
       const body = { email, password }
       const data = await request<LoginResponseT>({ url: `/api/auth/login`, method: `POST`, body })
-      auth.login({ jwtToken: data.token, id: data.userId })
+      auth.login({ jwtToken: data.token, id: data.userId, createdAt: data.createdAt })
+
+      console.log(`USERDATA:`, data)
    }
 
 
@@ -64,7 +64,7 @@ const LoginPage = () => {
                errorText={error ? error[`password`] : null} />
          </div>
          <div className={style.button}>
-            <MyButton isDisabled={isLoading} onButtonClick={onButtonClick} label={`Sign In`} />
+            <MyButton isLoading={isLoading} isDisabled={isLoading} onButtonClick={onButtonClick} label={`Sign In`} />
          </div>
          <Link to={`/register`}>{`Don't have account? Sign up`}</Link>
       </div>

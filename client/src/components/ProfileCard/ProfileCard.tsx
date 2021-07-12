@@ -4,7 +4,7 @@ import { msToBirthdate } from '../../utils/birtdateToMs'
 
 import style from './ProfileCard.module.css'
 
-type ProfileCard = {
+type ProfileCardProps = {
    onEditPress: () => void
    onDeletePress: () => void
    data: {
@@ -15,7 +15,7 @@ type ProfileCard = {
    }
 }
 
-const ProfileCard: FC<ProfileCard> = ({ onEditPress, onDeletePress, data: { name, gender, birthdate, city } }) => {
+const ProfileCard: FC<ProfileCardProps> = ({ onEditPress, onDeletePress, data: { name, gender, birthdate, city } }) => {
 
 
    return (

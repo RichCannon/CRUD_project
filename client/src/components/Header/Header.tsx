@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { NavLink, useHistory } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
 
 import { DashboardIcon } from './assets/DashboardIcon'
@@ -7,19 +7,17 @@ import { ProfilesIcon } from './assets/ProfilesIcon'
 import { UsersIcon } from './assets/UsersIcon'
 import style from './Header.module.css'
 
-type Header = {
+type HeaderProps = {
    onLogout: () => void
 }
 
-const Header: FC<Header> = ({ onLogout }) => {
+const Header: FC<HeaderProps> = ({ onLogout }) => {
 
-   const history = useHistory()
 
    const { userData } = useContext(AuthContext)
 
    const onLogoutClick = () => {
       onLogout()
-      // history.push(`/`)
 
    }
 

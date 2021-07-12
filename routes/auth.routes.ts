@@ -2,9 +2,11 @@ import { Router, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import { check, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
+
 import config from 'config'
 
 import { User } from './models/User'
+import { authMiddleware, RequestWithId } from '../middleware/auth.middleware'
 
 const router = Router()
 
@@ -49,7 +51,7 @@ router.post(
          }
 
          const hashedPass = await bcrypt.hash(password, 11)
-         const user = new User({ email, password: hashedPass, role, userName })
+         const user = new User({ email, password: hashedPass, role, userName, lastTokenTimestamp: 0 })
 
          await user.save()
 
@@ -96,14 +98,17 @@ router.post(
          }
 
 
+         const createdAtToken = Date.now()
 
          const token = jwt.sign(
-            { userId: user.id },
+            { userId: user.id, createdAt: createdAtToken },
             config.get(`jwtSecretKey`),
             { expiresIn: `30d` }
          )
 
-         res.json({ token, userId: user.id })
+         await user.updateOne({ lastTokenTimestamp: createdAtToken })
+
+         res.json({ token, userId: user.id, createdAt: createdAtToken })
 
 
       } catch (e) {
@@ -112,6 +117,50 @@ router.post(
    })
 
 
-router.get(`/newToken`)
+router.get(
+   `/logout`,
+   authMiddleware,
+   (req: RequestWithId<{}, {}, {}>, res: Response) => {
+      try {
+
+         const token = jwt.sign(
+            { userId: req.myId },
+            config.get(`jwtSecretKey`),
+            { expiresIn: `30d` }
+         )
+
+         res.json({ token })
+
+      } catch (e) {
+         res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
+      }
+
+   })
+
+
+router.get(
+   `/newToken`,
+   authMiddleware,
+   async (req: RequestWithId<{}, {}, {}>, res: Response) => {
+      try {
+
+         const createdAtToken = Date.now()
+
+         const token = jwt.sign(
+            { userId: req.myId, createdAt: createdAtToken },
+            config.get(`jwtSecretKey`),
+            { expiresIn: `30d` }
+         )
+
+         await User.updateOne({ _id: req.myId }, { lastTokenTimestamp: createdAtToken })
+
+
+         res.json({ token, userId: req.myId, createdAt: createdAtToken })
+
+      } catch (e) {
+         res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
+      }
+
+   })
 
 export { router as authRouter }

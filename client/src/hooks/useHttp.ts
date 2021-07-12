@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 type RequestT<B> = {
    url: string,
@@ -26,6 +26,12 @@ export const useHttp = () => {
    const [isLoading, setIsLoading] = useState(false)
    const [error, setError] = useState<ErrorFormattedT | null>(null)
 
+   // useEffect(() => {
+   //    if (error && error.server) {
+   //       alert(error.server)
+   //    }
+   // }, [error])
+
 
    const request = useCallback(async function <T, B = any>({ url, method = `GET`, body = null, headers = {} }: RequestT<B>): Promise<T> {
       setIsLoading(true)
@@ -43,11 +49,10 @@ export const useHttp = () => {
          const data: ErrorResponseT | T = await response.json()
 
 
-
-
          if (!response.ok) {
             const newData = data as ErrorResponseT
             const errorObj: ErrorFormattedT = {}
+
             newData.errors.map(d => errorObj[d.param] = d.msg)
             if (response.status === 500) {
                alert(`Some problems on server`)

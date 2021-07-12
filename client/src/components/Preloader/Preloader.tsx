@@ -1,9 +1,15 @@
-import style from './Preloader.module.css'
+import { FC } from 'react'
+import cssStyle from './Preloader.module.css'
 
-const Preloader = () => {
+
+type PreloaderProps = {
+   style?: React.CSSProperties
+}
+
+const Preloader: FC<PreloaderProps> = ({ style }) => {
    return (
-      <div className={style.container}>
-         <div className={style.ldsRing}><div></div><div></div><div></div><div></div></div>
+      <div style={style} className={cssStyle.container}>
+         <div className={cssStyle.ldsRing}><div></div><div></div><div></div><div></div></div>
       </div>
    )
 }

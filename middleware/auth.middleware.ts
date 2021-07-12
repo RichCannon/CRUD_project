@@ -16,16 +16,23 @@ const middleware = async (req: RequestWithId, res: Response, next: NextFunction)
 
 
       if (!token) {
-         return res.status(401).json({ message: `You need to log in` })
+         throw Error(`You need to log in`)
+
       }
 
-      const { userId } = jwt.verify(token, config.get(`jwtSecretKey`)) as { userId: string }
+      const { userId, createdAt } = jwt.verify(token, config.get(`jwtSecretKey`)) as { userId: string, createdAt: number }
 
       const user = await User.findOne({ _id: userId })
 
 
+
+      if (+new Date(user!.lastTokenTimestamp) !== createdAt) {
+
+         return res.status(401).json({ errors: [{ msg: `Invalid token`, param: `auth` }] })
+      }
+
       if (!user) {
-         res.status(400).json({ message: `User doesn't exist` })
+         return res.status(400).json({ errors: [{ msg: `User doesn't exist`, param: `auth` }] })
 
       }
 
@@ -35,7 +42,7 @@ const middleware = async (req: RequestWithId, res: Response, next: NextFunction)
 
 
    } catch (e) {
-      res.status(401).json({ message: `You need to log in` })
+      res.status(401).json({ errors: [{ msg: e.message || `You need to log in`, param: `auth` }] })
    }
 }
 
