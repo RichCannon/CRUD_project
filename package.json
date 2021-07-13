@@ -18,7 +18,6 @@
     "express": "^4.17.1",
     "express-validator": "^6.12.0",
     "jsonwebtoken": "^8.5.1",
-    "jwt-redis": "^6.0.0",
     "mongoose": "^5.13.2",
     "typescript": "^4.3.5"
   },

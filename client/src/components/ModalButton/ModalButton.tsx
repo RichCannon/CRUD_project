@@ -13,10 +13,10 @@ type ModalButtonProps = {
 const ModalButton:FC<ModalButtonProps> = ({ isLoading, onAcceptClick, onDeclineClick }) => {
    return (
       <div className={style.modalButtonsWrapper}>
-         <div onClick={isLoading ? () => { } : onAcceptClick} className={style.modalButton}>
+         <div data-testid={`acceptButton`} onClick={isLoading ? () => { } : onAcceptClick} className={style.modalButton}>
             <DoneIcon />
          </div>
-         <div onClick={isLoading ? () => { } : onDeclineClick} className={style.modalButton}>
+         <div data-testid={`declineButton`} onClick={isLoading ? () => { } : onDeclineClick} className={style.modalButton}>
             <CrossIcon />
          </div>
       </div>

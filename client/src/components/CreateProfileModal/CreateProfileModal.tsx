@@ -12,8 +12,8 @@ const CreateProfileModal: FC<CreateProfileModalProps> = ({ children, onDismissCl
 
 
    return (
-      <div onClick={onDismissClick} className={style.container}>
-         <div  onClick={e => e.stopPropagation()} className={style.contentWrapper}>
+      <div data-testid={`modalContainer`} onClick={onDismissClick} className={style.container}>
+         <div  data-testid={`modalContent`} onClick={e => e.stopPropagation()} className={style.contentWrapper}>
             {children}
          </div>
       </div>

@@ -14,7 +14,7 @@ type MyButtonProps = {
 const MyButton: FC<MyButtonProps> = ({ label, onButtonClick, isDisabled, isLoading = true }) => {
 
    return (
-      <div onClick={isDisabled ? () => 1 : onButtonClick} className={style.container} >
+      <div key={`myButton`} onClick={isDisabled ? () => 1 : onButtonClick} className={style.container} >
          {isLoading ? <Preloader style={{ transform: `scale(.5)` }} /> : <div className={style.label}>{label}</div>}
       </div>
    )

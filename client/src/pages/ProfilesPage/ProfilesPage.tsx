@@ -10,7 +10,8 @@ import ProfileCard from '../../components/ProfileCard/ProfileCard';
 import { AuthContext } from '../../context/AuthContext';
 import { useHttp } from '../../hooks/useHttp';
 import {
-   CreateProfileBody, CREATE_PROFILE_URL, DELETE_PROFILE_URL,
+   CreateProfileBody,
+   CREATE_PROFILE_URL, DELETE_PROFILE_URL,
    DELETE_USER_URL, GenderT, GET_PROFILES_URL, GET_USER_URL,
    PATCH_PROFILE_URL, PATCH_USER_URL, RoleT
 } from '../../types/types';
@@ -118,7 +119,7 @@ const ProfilesPage = () => {
 
 
 
-   const onEditPress = async (data: CreateProfileBody) => {
+   const onEditPress = (data: CreateProfileBody) => {
       setIsVisible(true)
       setName(data.name)
       setGender(data.gender)
@@ -130,16 +131,19 @@ const ProfilesPage = () => {
    }
 
 
-   const onDeletePress = async (_id?: string) => {
-      await getProfileDataRequest<CreateProfileBody[]>({
+   const onDeletePress = async (profileId?: string, userId?: string) => {
+
+    //  const URL = userId ? `${GET_PROFILES_URL}/${userId}` : GET_PROFILES_URL
+
+      await getProfileDataRequest({
          url: DELETE_PROFILE_URL,
          method: `DELETE`,
-         body: { _id },
+         body: { _id: profileId, userId },
          headers: { authorization: `Bearer ${auth.token}` }
       })
 
       const profileData = await getProfileDataRequest<CreateProfileBody[]>({
-         url: GET_PROFILES_URL,
+         url: `${GET_PROFILES_URL}/${userId}`,
          headers: { authorization: `Bearer ${auth.token}` }
       })
 
@@ -324,7 +328,7 @@ const ProfilesPage = () => {
                         <ProfileCard
                            data={d}
                            onEditPress={() => onEditPress(d)}
-                           onDeletePress={() => onDeletePress(d._id)} />
+                           onDeletePress={() => onDeletePress(d._id, d.owner)} />
                      </div >
                   ))}
                   {!userId && <CreateProfileButton onClick={onAddProfileClick} />}

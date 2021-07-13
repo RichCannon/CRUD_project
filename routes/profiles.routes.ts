@@ -166,6 +166,7 @@ router.get(
 
 type DeleteProfileReq = {
    _id: string
+   userId: string
 }
 
 
@@ -181,10 +182,12 @@ router.delete(
             return res.status(400).json({ message: `This profile doesn't exist` })
          }
 
+         console.log(`req.body.userId`,req.body.userId)
+
          if (`${profile.owner}` === req.myId || req.myRole === `admin`) {
             await Profiles.deleteOne({ _id: req.body._id })
             // Remove objectId from users profile
-            await User.updateOne({ _id: req.myId }, {
+            await User.updateOne({ _id: req.body.userId }, {
                "$pull": {
                   profiles: req.body._id
                }

@@ -29,20 +29,22 @@ const Header: FC<HeaderProps> = ({ onLogout }) => {
          </div>
          <div className={style.rightTab}>
             <div className={style.headerTabs}>
-               <NavLink to={`/profiles`} className={style.headerTab}>
+               <NavLink data-testid={`toProfiles`} to={`/profiles`} className={style.headerTab}>
                   <div className={style.headerTabLabel}>{`Profiles`}</div>
                   <ProfilesIcon />
                </NavLink>
-               <NavLink to={`/dashboard`} className={style.headerTab}>
-                  <div className={style.headerTabLabel}>{`Dashboard`}</div>
-                  <DashboardIcon />
-               </NavLink>
                {
                   userData.role === `admin` &&
-                  <NavLink to={`/users`} className={style.headerTab}>
-                     <div className={style.headerTabLabel}>{`Users`}</div>
-                     <UsersIcon />
-                  </NavLink>
+                  <>
+                     <NavLink data-testid={`toDashboard`} to={`/dashboard`} className={style.headerTab}>
+                        <div className={style.headerTabLabel}>{`Dashboard`}</div>
+                        <DashboardIcon />
+                     </NavLink>
+                     <NavLink data-testid={`toUsers`} to={`/users`} className={style.headerTab}>
+                        <div className={style.headerTabLabel}>{`Users`}</div>
+                        <UsersIcon />
+                     </NavLink>
+                  </>
                }
             </div>
             <div className={style.logOutButton}>
