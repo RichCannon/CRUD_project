@@ -16,7 +16,7 @@ router.get(`/`, authMiddleware, async (req: Request<{}, {}, {}>, res: Response) 
       const profileCount = await Profiles.countDocuments()
 
       // Check if differenct between birthdate and date now in ms
-      // greater than {ms18years}, return {isOver18} true, else false
+      // greater than {ms18years} return {isOver18} true, else false
 
       const ms18years = 568080000000 // 18 years old in ms
 
@@ -35,7 +35,6 @@ router.get(`/`, authMiddleware, async (req: Request<{}, {}, {}>, res: Response) 
       res.json({ usersCount, profileCount, profileOver18: mapOver18.length })
 
    } catch (e) {
-      console.log(e)
       res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
    }
 

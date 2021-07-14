@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express'
 import { check, validationResult } from 'express-validator'
 
 import { authMiddleware, RequestWithId } from '../middleware/auth.middleware'
-import { birthdateValidate } from '../middleware/validators'
+import { birthdateGtThDateNow, birthdateValidate } from '../middleware/validators'
 
 
 import { Profiles, ProfilesT } from './models/Profiles'
@@ -40,6 +40,8 @@ router.post(
       check(`name`, `Enter data`).notEmpty(),
       check(`city`, `Enter data`).notEmpty(),
       check(`birthdate`, `Date must be DD.MM.YYYY`).custom(birthdateValidate),
+      check(`birthdate`, `Birthdate can't be greater than today date`).custom(birthdateGtThDateNow),
+      
    ],
    async (req: RequestWithId<{}, {}, ProfilesCreateReq>, res: Response) => {
       try {
@@ -58,9 +60,9 @@ router.post(
 
          const msBirthdate = birthdateToMs(birthdate)
 
-         if (msBirthdate >= Date.now()) {
-            return res.status(400).json({ errors: [{ msg: `Birthdate can't be greater than today date`, param: `birthdate` }] })
-         }
+         // if (msBirthdate >= Date.now()) {
+         //    return res.status(400).json({ errors: [{ msg: `Birthdate can't be greater than today date`, param: `birthdate` }] })
+         // }
 
          const profiles = new Profiles({ ...restBody, birthdate: msBirthdate, owner: req.myId })
          // Add objectId of profile to users profile
@@ -93,6 +95,7 @@ router.patch(
       check(`name`, `Enter data`).notEmpty(),
       check(`city`, `Enter data`).notEmpty(),
       check(`birthdate`, `Date must be DD.MM.YYYY`).custom(birthdateValidate),
+      check(`birthdate`, `Birthdate can't be greater than today date`).custom(birthdateGtThDateNow),
    ],
    async (req: RequestWithId<{}, {}, ProfilesModifyReq>, res: Response) => {
       try {
@@ -149,7 +152,7 @@ router.get(
          // If you are user you get only yours profile
          const profiles = await Profiles.find(
             {
-               owner: req.params.id && req.myRole === `admin`
+               owner: req.params.id && (req.myRole === `admin`)
                   ? req.params.id
                   : req.myId
             }
@@ -182,7 +185,6 @@ router.delete(
             return res.status(400).json({ message: `This profile doesn't exist` })
          }
 
-         console.log(`req.body.userId`,req.body.userId)
 
          if (`${profile.owner}` === req.myId || req.myRole === `admin`) {
             await Profiles.deleteOne({ _id: req.body._id })

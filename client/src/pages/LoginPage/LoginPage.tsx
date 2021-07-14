@@ -33,17 +33,14 @@ const LoginPage = () => {
       clearError(`email`)
    }
    const onPasswordChange = (value: string) => {
-
       setPassword(value)
-      clearError(`email`)
+      clearError(`password`)
    }
 
    const onButtonClick = async () => {
       const body = { email, password }
       const data = await request<LoginResponseT>({ url: `/api/auth/login`, method: `POST`, body })
       auth.login({ jwtToken: data.token, id: data.userId, createdAt: data.createdAt })
-
-      console.log(`USERDATA:`, data)
    }
 
 
