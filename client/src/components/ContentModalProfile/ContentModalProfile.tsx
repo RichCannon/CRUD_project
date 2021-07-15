@@ -50,7 +50,13 @@ const ContentModalProfile: FC<CreateProfileModalProps> = ({
             <MyCheckbox isRound label={`female`} isClicked={gender === `female`} onClick={() => onGenderChange(`female`)} />
          </div>
       </div>
-      <MyInput errorText={errorBirthdate} value={birthdate} onTextChange={onBirthDateChange} label={`birthdate:`} />
+      <MyInput
+         max={new Date().toISOString().slice(0, 10)}
+         type={`date`}
+         errorText={errorBirthdate}
+         value={birthdate}
+         onTextChange={onBirthDateChange}
+         label={`birthdate:`} />
       <MyInput onEnterPress={onAcceptClick} errorText={errorCity} value={city} onTextChange={onCityChange} label={`city:`} />
 
       <ModalButton onAcceptClick={onAcceptClick} onDeclineClick={onDeclineClick} isLoading={isLoading} />

@@ -3,6 +3,7 @@ import {
    Request,
    Response
 } from "express"
+
 import { authMiddleware } from "../middleware/auth.middleware"
 import { Profiles } from "./models/Profiles"
 import { User } from "./models/User"

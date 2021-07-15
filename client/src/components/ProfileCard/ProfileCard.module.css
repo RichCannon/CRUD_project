@@ -38,6 +38,7 @@
    -ms-user-select: none;       /* Internet Explorer/Edge */
    user-select: none; 
    border-top: 1px solid #D6D8E7;
+   cursor: pointer;
 }
 
 .button {

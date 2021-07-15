@@ -1,8 +1,8 @@
 import { Router, Response, Request } from "express";
 import { check, validationResult } from "express-validator";
-import { RoleT } from "../client/src/types/types";
 
 import { authMiddleware, RequestWithId } from "../middleware/auth.middleware";
+import { RoleT } from "../types/types";
 import { Profiles } from "./models/Profiles";
 import { User } from "./models/User";
 

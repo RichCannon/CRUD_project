@@ -1,5 +1,6 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect, useRef } from 'react'
 import { useHistory, useParams } from 'react-router-dom';
+import SimpleReactValidator from 'simple-react-validator';
 
 import ContentModalProfile from '../../components/ContentModalProfile/ContentModalProfile';
 import ContentModalUser from '../../components/ContentModalUser/ContentModalUser';
@@ -61,7 +62,12 @@ const ProfilesPage = () => {
       setBirthdate(``)
       setCity(``)
       clearError()
+      setCurrentEdit({ owner: ``, _id: `` })
    }
+
+   const validate = useRef(new SimpleReactValidator())
+
+
 
 
    const [currentEdit, setCurrentEdit] = useState<{ owner?: string, _id: string }>({ owner: ``, _id: `` })
@@ -123,7 +129,7 @@ const ProfilesPage = () => {
       setIsVisible(true)
       setName(data.name)
       setGender(data.gender)
-      setBirthdate(msToBirthdate(data.birthdate))
+      setBirthdate(data.birthdate)
       setCity(data.city)
       if (data._id) {
          setCurrentEdit({ owner: data.owner, _id: data._id })
@@ -133,7 +139,6 @@ const ProfilesPage = () => {
 
    const onDeletePress = async (profileId?: string, userId?: string) => {
 
-    //  const URL = userId ? `${GET_PROFILES_URL}/${userId}` : GET_PROFILES_URL
 
       await getProfileDataRequest({
          url: DELETE_PROFILE_URL,
@@ -163,24 +168,29 @@ const ProfilesPage = () => {
          name
       }
 
-      if (currentEdit._id && currentEdit.owner) {
+      validate.current.message(`city`, city, `required|min:5`)
+      // validate.current.message(`city`, city, `required|min:5`)
 
-         await request({
-            url: PATCH_PROFILE_URL,
-            body: { ...body, ...currentEdit },
-            method: `PATCH`,
-            headers: { authorization: `Bearer ${auth.token}` }
-         })
+      console.log(`error`, validate.current.getErrorMessages())
 
-      }
-      else {
-         await request({
-            url: CREATE_PROFILE_URL,
-            body,
-            method: `POST`,
-            headers: { authorization: `Bearer ${auth.token}` }
-         })
-      }
+      // if (currentEdit._id && currentEdit.owner) {
+
+      //    await request({
+      //       url: PATCH_PROFILE_URL,
+      //       body: { ...body, ...currentEdit },
+      //       method: `PATCH`,
+      //       headers: { authorization: `Bearer ${auth.token}` }
+      //    })
+
+      // }
+      // else {
+      //    await request({
+      //       url: CREATE_PROFILE_URL,
+      //       body,
+      //       method: `POST`,
+      //       headers: { authorization: `Bearer ${auth.token}` }
+      //    })
+      // }
 
       setCurrentEdit({ owner: ``, _id: `` })
 
@@ -285,7 +295,7 @@ const ProfilesPage = () => {
                         onCityChange={onCityChange}
                         name={name}
                         gender={gender}
-                        birthdate={birthdate}
+                        birthdate={new Date(birthdate).toISOString().slice(0, 10)}
                         city={city}
                         isLoading={isLoading}
                         errorBirthdate={error && error[`birthdate`]}

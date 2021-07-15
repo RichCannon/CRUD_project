@@ -3,6 +3,7 @@ import { check, validationResult } from 'express-validator'
 
 import { authMiddleware, RequestWithId } from '../middleware/auth.middleware'
 import { birthdateGtThDateNow, birthdateValidate } from '../middleware/validators'
+import { birthdateToMs } from '../utils/birthdateToMs'
 
 
 import { Profiles, ProfilesT } from './models/Profiles'
@@ -22,14 +23,6 @@ type ProfilesCreateReq = {
 }
 
 
-const birthdateToMs = (date: string) => {
-   const frmtdBirthdateArr = date.split(`.`)
-   return +new Date(+frmtdBirthdateArr[2], +frmtdBirthdateArr[1] - 1, +frmtdBirthdateArr[0])
-}
-
-
-
-
 
 
 // Request to create profile
@@ -39,7 +32,7 @@ router.post(
       authMiddleware,
       check(`name`, `Enter data`).notEmpty(),
       check(`city`, `Enter data`).notEmpty(),
-      check(`birthdate`, `Date must be DD.MM.YYYY`).custom(birthdateValidate),
+      check(`birthdate`, `Wrong date format`).isDate(),
       check(`birthdate`, `Birthdate can't be greater than today date`).custom(birthdateGtThDateNow),
       
    ],
@@ -58,7 +51,7 @@ router.post(
 
          const { birthdate, ...restBody } = req.body
 
-         const msBirthdate = birthdateToMs(birthdate)
+         const msBirthdate = +new Date(birthdate)
 
          // if (msBirthdate >= Date.now()) {
          //    return res.status(400).json({ errors: [{ msg: `Birthdate can't be greater than today date`, param: `birthdate` }] })
@@ -94,7 +87,7 @@ router.patch(
       authMiddleware,
       check(`name`, `Enter data`).notEmpty(),
       check(`city`, `Enter data`).notEmpty(),
-      check(`birthdate`, `Date must be DD.MM.YYYY`).custom(birthdateValidate),
+      check(`birthdate`, `Wrong date format`).isDate(),
       check(`birthdate`, `Birthdate can't be greater than today date`).custom(birthdateGtThDateNow),
    ],
    async (req: RequestWithId<{}, {}, ProfilesModifyReq>, res: Response) => {
@@ -102,8 +95,7 @@ router.patch(
 
          const { _id, birthdate, ...restBody } = req.body
 
-
-         const msBirthdate = birthdateToMs(birthdate)
+         const msBirthdate = +new Date(birthdate)
 
          const errors = validationResult(req)
 

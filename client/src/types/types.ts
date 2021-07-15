@@ -14,7 +14,7 @@ export const NEW_TOKEN_URL = '/api/auth/newToken'
 export type CreateProfileBody = {
    name: string,
    gender: GenderT
-   birthdate: number
+   birthdate: string
    city: string
    _id?: string
    owner?: string

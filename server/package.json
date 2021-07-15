@@ -5,9 +5,9 @@
   "author": "Volodymyr Kucher <syndicateua@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node app.ts",
+    "start": "node node-ts app.ts",
     "server": "nodemon app.ts",
-    "client": "npm run start --prefix client",
+    "client": "npm run start --prefix ../client",
     "dev": "concurrently \"yarn server\" \"yarn client\""
   },
   "dependencies": {

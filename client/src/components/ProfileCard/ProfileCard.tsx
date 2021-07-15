@@ -10,7 +10,7 @@ type ProfileCardProps = {
    data: {
       name: string,
       gender: `male` | 'female'
-   birthdate: number
+      birthdate: string
       city: string
    }
 }
@@ -23,7 +23,7 @@ const ProfileCard: FC<ProfileCardProps> = ({ onEditPress, onDeletePress, data: {
          <div className={style.infoWrapper}>
             <div className={style.infoText}>{name}</div>
             <div className={style.infoText}>{gender}</div>
-            <div className={style.infoText}>{msToBirthdate(birthdate)}</div>
+            <div className={style.infoText}>{msToBirthdate(+new Date(birthdate))}</div>
             <div className={style.infoText}>{city}</div>
          </div>
          <div className={style.buttons}>

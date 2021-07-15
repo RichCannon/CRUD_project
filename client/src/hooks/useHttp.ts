@@ -82,5 +82,5 @@ export const useHttp = () => {
 
    }
 
-   return { isLoading, request, clearError, error }
+   return { isLoading, request, clearError, error, setError }
 }

@@ -21,7 +21,7 @@ type ReqLoginT = {
    email: string
    password: string
 }
-
+ 
 router.post(
    `/register`,
    [
