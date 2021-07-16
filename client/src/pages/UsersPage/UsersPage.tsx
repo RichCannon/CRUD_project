@@ -29,8 +29,8 @@ const UsersPage = () => {
 
       if (auth.userData.role !== `admin`) {
          history.push(`/profiles`)
-
       }
+      
       else {
          (async () => {
             const users = await request<UserT[]>({

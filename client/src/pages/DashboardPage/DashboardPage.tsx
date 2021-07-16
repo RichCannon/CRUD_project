@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import DashboardCard from '../../components/DashboardCard/DashboardCard';
 import Preloader from '../../components/Preloader/Preloader';
 import { AuthContext } from '../../context/AuthContext';
@@ -15,8 +16,11 @@ type DashboardResponseT = {
 const DashboardPage = () => {
 
    const { request, isLoading } = useHttp()
+   const history = useHistory()
    const auth = useContext(AuthContext)
-   const [dashboardData, setDashboardData] = useState<DashboardResponseT>({ usersCount: 0, profileCount: 0, profileOver18:0 })
+   const [dashboardData, setDashboardData] = useState<DashboardResponseT>({ usersCount: 0, profileCount: 0, profileOver18: 0 })
+
+
 
    useEffect(() => {
       (async () => {
@@ -26,7 +30,11 @@ const DashboardPage = () => {
          })
          setDashboardData(response)
       })()
-   }, [])
+
+      if (auth.userData.role !== `admin`) {
+         history.push(`/profiles`)
+      }
+   }, [auth.token])
 
 
 

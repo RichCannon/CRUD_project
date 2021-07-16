@@ -21,21 +21,34 @@ router.get(`/`, authMiddleware, async (req: Request<{}, {}, {}>, res: Response) 
 
       const ms18years = 568080000000 // 18 years old in ms
 
+      // const profileOver18 = await Profiles.aggregate([{
+      //    "$project": {
+      //       isOver18: {
+      //          "$gt": [
+      //             { "$subtract": [Date.now(), "$birthdate"] }, ms18years
+      //          ]
+      //       }
+      //    }
+      // },
+      // ])
+
       const profileOver18 = await Profiles.aggregate([{
-         "$project": {
+         $project: {
             isOver18: {
                "$gt": [
                   { "$subtract": [Date.now(), "$birthdate"] }, ms18years
                ]
             }
          }
+      },
+      {
+         $match: { isOver18: true }
       }])
 
-      const mapOver18 = profileOver18.filter(d => d.isOver18)
-
-      res.json({ usersCount, profileCount, profileOver18: mapOver18.length })
+      res.json({ usersCount, profileCount, profileOver18: profileOver18.length })
 
    } catch (e) {
+      console.log(e)
       res.status(500).json({ errors: [{ msg: `Server error`, param: `server` }] })
    }
 

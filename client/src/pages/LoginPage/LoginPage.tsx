@@ -1,5 +1,6 @@
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import SimpleReactValidator from 'simple-react-validator';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyInput from '../../components/MyInput/MyInput';
@@ -14,19 +15,16 @@ import style from './LoginPage.module.css';
 const LoginPage = () => {
 
 
+   const validate = useRef(new SimpleReactValidator())
+
    const auth = useContext(AuthContext)
 
 
    const [email, setEmail] = useState(``)
    const [password, setPassword] = useState(``)
 
-   const { request, error, isLoading, clearError } = useHttp()
+   const { request, error, isLoading, clearError, setError } = useHttp()
 
-   useEffect(() => {
-      if (error && error[`server`]) {
-         alert(error[`server`])
-      }
-   }, [error])
 
    const onEmailChange = (value: string) => {
       setEmail(value)
@@ -39,8 +37,18 @@ const LoginPage = () => {
 
    const onButtonClick = async () => {
       const body = { email, password }
-      const data = await request<LoginResponseT>({ url: `/api/auth/login`, method: `POST`, body })
-      auth.login({ jwtToken: data.token, id: data.userId, createdAt: data.createdAt })
+
+      validate.current.message(`email`, email, `required|email`)
+      validate.current.message(`password`, password, `required|min:5`)
+
+      if (validate.current.allValid()) {
+         const data = await request<LoginResponseT>({ url: `/api/auth/login`, method: `POST`, body })
+         auth.login({ jwtToken: data.token, id: data.userId, createdAt: data.createdAt })
+      }
+      else {
+         setError(validate.current.getErrorMessages())
+      }
+
    }
 
 
@@ -56,7 +64,7 @@ const LoginPage = () => {
             <MyInput name={`email`} label={`Email`} value={email}
                onTextChange={onEmailChange} errorText={error ? error[`email`] : null} />
             <MyInput name={`password`} label={`Password`} value={password}
-               onTextChange={onPasswordChange} type={`password`} 
+               onTextChange={onPasswordChange} type={`password`}
                onEnterPress={onButtonClick}
                errorText={error ? error[`password`] : null} />
          </div>

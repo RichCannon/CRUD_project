@@ -94,7 +94,7 @@ router.post(
          const isMatchPass = await bcrypt.compare(password, user.password)
 
          if (!isMatchPass) {
-            return res.status(400).json({ errors: [{ msg: `Wrong password or email (password)`, param: `password` }] })
+            return res.status(400).json({ errors: [{ msg: `Wrong password or email`, param: `password` }] })
          }
 
 

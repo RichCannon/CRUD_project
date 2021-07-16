@@ -44,15 +44,16 @@ router.get(
       try {
 
          if (req.myRole === `admin`) {
-            const users = await User.find()
+            const users = await User.aggregate([{
+               $project: {
+                  userName: "$userName",
+                  email: "$email",
+                  role: "$role",
+                  numOfProfiles: { $size: "$profiles" }
+               }
+            }])
 
-            return res.status(200).json(users.map(d => ({
-               email: d.email,
-               numOfProfiles: d.profiles.length,
-               userName: d.userName,
-               role: d.role,
-               _id: `${d._id}`
-            })))
+            return res.status(200).json(users)
          }
          else {
             return res.status(403).json({ message: `Permission denied` })

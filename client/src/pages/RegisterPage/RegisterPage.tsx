@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import SimpleReactValidator from 'simple-react-validator';
 
 import MyButton from '../../components/MyButton/MyButton';
 import MyCheckbox from '../../components/MyCheckbox/MyCheckbox';
@@ -11,7 +12,9 @@ const LoginPage = () => {
 
    const history = useHistory()
 
-   const { isLoading, request, error, clearError } = useHttp()
+   const validate = useRef(new SimpleReactValidator())
+
+   const { isLoading, request, error, clearError ,setError} = useHttp()
 
    const [userName, setUserName] = useState(``)
    const [email, setEmail] = useState(``)
@@ -34,26 +37,27 @@ const LoginPage = () => {
    }
 
    const onButtonClick = async () => {
-      try {
 
+
+      validate.current.message(`userName`, userName, `required|min:5`)
+      validate.current.message(`email`, email, `required|email`)
+      validate.current.message(`password`, password, `required|min:5`)
+
+      if (validate.current.allValid()) {
          const body = { email, password, userName, role: isClicked ? `admin` : `user` }
-
          await request({ url: `/api/auth/register`, method: `POST`, body })
-
          alert(`Account succesfuly created! Please login`)
-
          history.push('/login')
-
-      } catch (e) {
-
       }
+      else {
+         setError(validate.current.getErrorMessages())
+      }
+
    }
 
    const onCheckboxClick = () => {
       setIsClicked(!isClicked)
    }
-
-
 
 
 
@@ -65,7 +69,7 @@ const LoginPage = () => {
          <div className={style.inputs}>
             <MyInput name={`userName`} label={`Username`} value={userName}
                onTextChange={onUsernameChange} errorText={error ? error[`userName`] : null} />
-            <MyInput name={`email`} label={`Email`} value={email}
+            <MyInput type={`email`} name={`email`} label={`Email`} value={email}
                onTextChange={onEmailChange} errorText={error ? error[`email`] : null} />
             <MyInput name={`password`} label={`Password`} value={password} onEnterPress={onButtonClick}
                onTextChange={onPasswordChange} type={`password`} errorText={error ? error[`password`] : null} />

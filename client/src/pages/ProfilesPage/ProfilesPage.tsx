@@ -16,7 +16,6 @@ import {
    DELETE_USER_URL, GenderT, GET_PROFILES_URL, GET_USER_URL,
    PATCH_PROFILE_URL, PATCH_USER_URL, RoleT
 } from '../../types/types';
-import { msToBirthdate } from '../../utils/birtdateToMs';
 import { BucketIcon } from './assets/BucketIcon';
 import { EditIcon } from './assets/EditIcon';
 import style from './ProfilesPage.module.css';
@@ -29,6 +28,8 @@ type CreateProfileFormT = {
    _id?: string
    owner?: string
 }
+
+
 
 
 type UserDataT = { userName: string, role: RoleT, email: string, userId?: string }
@@ -50,6 +51,8 @@ const ProfilesPage = () => {
    const [userName, setUserName] = useState(``)
    const [email, setEmail] = useState(``)
    const [role, setRole] = useState<RoleT>(`user`)
+
+   const [userData, setUserData] = useState({ userName: ``, email: ``, role: `user` })
 
 
    const [isVisible, setIsVisible] = useState(false)
@@ -74,18 +77,18 @@ const ProfilesPage = () => {
 
    const [profilesData, setProfilesData] = useState<CreateProfileBody[]>([])
 
-   const { request, isLoading, error, clearError } = useHttp()
+   const { request, isLoading, error, clearError, setError } = useHttp()
 
    const { request: getProfileDataRequest,
       isLoading: profileDataLoading,
       error: profileDataErorr,
       clearError: profileDataClError } = useHttp()
 
-   useEffect(() => {
-      if (profileDataErorr) {
-         alert(profileDataErorr)
-      }
-   }, [profileDataErorr])
+   // useEffect(() => {
+   //    if (profileDataErorr) {
+   //       alert(profileDataErorr)
+   //    }
+   // }, [profileDataErorr])
 
 
    const getProfileData = async (userId?: string) => {
@@ -109,8 +112,14 @@ const ProfilesPage = () => {
          }
       })
 
-      setUserName(user.userName)
+      setUserData({
+         userName: user.userName,
+         email: user.email,
+         role: user.role
+      })
+
       setEmail(user.email)
+      setUserName(user.userName)
       setRole(user.role)
 
    }
@@ -134,25 +143,30 @@ const ProfilesPage = () => {
       if (data._id) {
          setCurrentEdit({ owner: data.owner, _id: data._id })
       }
+
    }
 
 
    const onDeletePress = async (profileId?: string, userId?: string) => {
 
+      const areYouSure = window.confirm(`Are you sure?`)
 
-      await getProfileDataRequest({
-         url: DELETE_PROFILE_URL,
-         method: `DELETE`,
-         body: { _id: profileId, userId },
-         headers: { authorization: `Bearer ${auth.token}` }
-      })
+      if (areYouSure) {
+         await getProfileDataRequest({
+            url: DELETE_PROFILE_URL,
+            method: `DELETE`,
+            body: { _id: profileId, userId },
+            headers: { authorization: `Bearer ${auth.token}` }
+         })
 
-      const profileData = await getProfileDataRequest<CreateProfileBody[]>({
-         url: `${GET_PROFILES_URL}/${userId}`,
-         headers: { authorization: `Bearer ${auth.token}` }
-      })
+         const profileData = await getProfileDataRequest<CreateProfileBody[]>({
+            url: `${GET_PROFILES_URL}/${userId}`,
+            headers: { authorization: `Bearer ${auth.token}` }
+         })
 
-      setProfilesData(profileData)
+         setProfilesData(profileData)
+      }
+
 
    }
 
@@ -168,36 +182,47 @@ const ProfilesPage = () => {
          name
       }
 
-      validate.current.message(`city`, city, `required|min:5`)
-      // validate.current.message(`city`, city, `required|min:5`)
 
-      console.log(`error`, validate.current.getErrorMessages())
+      validate.current.message(`city`, city, `required|min:2`)
+      validate.current.message(`name`, name, `required|min:4`)
+      validate.current.message(`birthdate`, birthdate, `required`)
 
-      // if (currentEdit._id && currentEdit.owner) {
+      const validating = validate.current.getErrorMessages()
 
-      //    await request({
-      //       url: PATCH_PROFILE_URL,
-      //       body: { ...body, ...currentEdit },
-      //       method: `PATCH`,
-      //       headers: { authorization: `Bearer ${auth.token}` }
-      //    })
 
-      // }
-      // else {
-      //    await request({
-      //       url: CREATE_PROFILE_URL,
-      //       body,
-      //       method: `POST`,
-      //       headers: { authorization: `Bearer ${auth.token}` }
-      //    })
-      // }
+      if (validate.current.allValid()) {
+         if (currentEdit._id && currentEdit.owner) {
+            await request({
+               url: PATCH_PROFILE_URL,
+               body: { ...body, ...currentEdit },
+               method: `PATCH`,
+               headers: { authorization: `Bearer ${auth.token}` }
+            })
 
-      setCurrentEdit({ owner: ``, _id: `` })
+         }
+         else {
+            await request({
+               url: CREATE_PROFILE_URL,
+               body,
+               method: `POST`,
+               headers: { authorization: `Bearer ${auth.token}` }
+            })
+         }
+         setCurrentEdit({ owner: ``, _id: `` })
 
-      getProfileData(userId)
+         getProfileData(userId)
 
-      clearState()
-      setIsVisible(false)
+         clearState()
+         setIsVisible(false)
+      }
+
+      else {
+         setError(validating)
+      }
+
+
+
+
    }
 
    const onDeclineClick = () => {
@@ -245,15 +270,25 @@ const ProfilesPage = () => {
          email, userName, role, userId
       }
 
-      await request({
-         url: PATCH_USER_URL, body, method: `PATCH`, headers: {
-            authorization: `Bearer ${auth.token}`
-         }
-      })
+      validate.current.message(`email`, email, `required|email`)
+      validate.current.message(`userName`, userName, `required|min:5`)
 
-      getUserData()
-      clearError()
-      setIsVisibleUserModal(false)
+      if (validate.current.allValid()) {
+         await request({
+            url: PATCH_USER_URL, body, method: `PATCH`, headers: {
+               authorization: `Bearer ${auth.token}`
+            }
+         })
+
+         getUserData()
+         clearError()
+         setIsVisibleUserModal(false)
+      }
+      else {
+         setError(validate.current.getErrorMessages())
+      }
+
+
    }
 
    const onDeclineUserClick = () => {
@@ -266,14 +301,18 @@ const ProfilesPage = () => {
    }
 
    const onDeleteIconClick = async () => {
-      await request({
-         url: DELETE_USER_URL, body: { userId },
-         method: `DELETE`,
-         headers: {
-            authorization: `Bearer ${auth.token}`
-         }
-      })
-      history.push(`/users`)
+      const areYouSure = window.confirm(`Are you sure?`)
+      if (areYouSure) {
+         await request({
+            url: DELETE_USER_URL, body: { userId },
+            method: `DELETE`,
+            headers: {
+               authorization: `Bearer ${auth.token}`
+            }
+         })
+         history.push(`/users`)
+      }
+
    }
 
 
@@ -295,7 +334,7 @@ const ProfilesPage = () => {
                         onCityChange={onCityChange}
                         name={name}
                         gender={gender}
-                        birthdate={new Date(birthdate).toISOString().slice(0, 10)}
+                        birthdate={birthdate ? new Date(birthdate).toISOString().slice(0, 10) : ``}
                         city={city}
                         isLoading={isLoading}
                         errorBirthdate={error && error[`birthdate`]}
@@ -322,9 +361,9 @@ const ProfilesPage = () => {
                   </CreateProfileModal>}
                {!!userId &&
                   <div className={style.userDataWrapper}>
-                     <div className={style.userDataText}>{userName}</div>
-                     <div className={style.userDataText}>{email}</div>
-                     <div className={style.userDataTextRole}>{role}</div>
+                     <div className={style.userDataText}>{userData.userName}</div>
+                     <div className={style.userDataText}>{userData.email}</div>
+                     <div className={style.userDataTextRole}>{userData.role}</div>
                      <div className={style.userEditDelIcon}>
                         <EditIcon onClick={onEditIconClick} />
                         <BucketIcon onClick={onDeleteIconClick} />

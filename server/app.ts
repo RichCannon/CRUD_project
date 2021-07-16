@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import config from 'config'
+import cors from 'cors'
 
 import { authRouter } from './routes/auth.routes'
 import { profilesRouter } from './routes/profiles.routes'
@@ -15,6 +16,9 @@ const SERVER_PORT: number = config.get(`SERVER_PORT`) || 4000
 const MONGO_URI: string = config.get(`MONGO_URI`)
 
 app.use(express.json())
+app.use(cors())
+
+console.log(process.env.PUBLIC_URL)
 
 app.use(`/api/auth`, authRouter)
 app.use(`/api/profiles`, profilesRouter)
@@ -38,3 +42,5 @@ const start = async () => {
 start()
 
 app.listen(SERVER_PORT, () => console.log(`Server port: ${SERVER_PORT}`))
+
+

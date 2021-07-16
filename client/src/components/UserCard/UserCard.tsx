@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { RoleT } from '../../types/types'
 
+import { RoleT } from '../../types/types'
 import style from './UserCard.module.css'
 
 
@@ -16,7 +16,7 @@ type UserCardProps = {
 const UserCard: FC<UserCardProps> = ({ userName, email, numOfProfiles, userId, role }) => {
 
 
-   return (
+   return ( 
       <Link to={{ pathname: `/profiles/${userId}` }} className={style.container}>
          <div className={style.infoText}>{userName}</div>
          <div className={style.infoText}>{email}</div>

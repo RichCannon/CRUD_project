@@ -1,4 +1,4 @@
-import { useCallback,  useState } from "react"
+import { useCallback, useState } from "react"
 
 type RequestT<B> = {
    url: string,
@@ -26,8 +26,9 @@ export const useHttp = () => {
    const [isLoading, setIsLoading] = useState(false)
    const [error, setError] = useState<ErrorFormattedT | null>(null)
 
- 
-
+  
+  // const BASE_URL =  `http://localhost:5000`
+ //  const BASE_URL =  `http://api_server:5000`
 
    const request = useCallback(async function <T, B = any>({ url, method = `GET`, body = null, headers = {} }: RequestT<B>): Promise<T> {
       setIsLoading(true)
